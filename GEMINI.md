@@ -6,8 +6,8 @@ Highly motivated and versatile Full-Stack Engineer and Data Analyst with a profo
 ---
 
 ## 🎓 Background & Education
-- **Degree:** B.Tech in Computer Science and Engineering (CSE) - 3rd Year
-- **Institution:** Kakatiya University College of Engineering and Technology (KUCET) / KITS Warangal (KITSW)
+- **Degree:** B.Tech in Computer Science and Engineering (CSE) - 4rd Year
+- **Institution:** Kakatiya University College of Engineering and Technology (KUCET)
 - **Focus Areas:** Full-stack Web & Mobile Development, Data Science/Analytics, Generative AI (LLMs, RAG), and Hardware-Software Integration (IoT).
 
 ---

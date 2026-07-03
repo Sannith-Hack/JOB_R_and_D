@@ -1,0 +1,12 @@
+{
+  "name": "resume-generator",
+  "version": "1.0.0",
+  "description": "Professional resume generator using Puppeteer",
+  "main": "generate_resume.js",
+  "scripts": {
+    "generate": "node generate_resume.js"
+  },
+  "dependencies": {
+    "puppeteer": "^21.0.0"
+  }
+}

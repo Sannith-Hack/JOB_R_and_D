@@ -88,6 +88,14 @@ Highly motivated and versatile Full-Stack Engineer and Data Analyst with a profo
 - **Tech Stack:** Three.js, HTML5 localStorage.
 - **Description:** A unique approach to creating and synchronizing a 3D scene across multiple browser windows for advanced web graphics and state management.
 
+### 14. Personal Developer Portfolio Website
+- **Tech Stack:** React 19 / Next.js, TypeScript, Tailwind CSS v4, Lucide Icons, Framer Motion.
+- **Description:** An interactive, high-impact developer portfolio showcasing full-stack applications, Agentic AI tools, hardware projects, data analytics certifications, and professional background.
+- **Key Features & UI Standards:**
+  - **Full-Bleed Project Cards:** Engineered image card containers to automatically handle both portrait and landscape screenshots/flyers. Employs `object-fit: cover; object-position: center top;` and/or ambient blurred backdrops (`filter: blur(18px) brightness(0.5)`) to eliminate empty side spaces (pillarboxing) on tall portrait project previews.
+  - **Interactive Action Buttons:** Direct integration of GitHub repository links and live interactive demo triggers.
+  - **Responsive Dark Theme:** Sleek dark-mode aesthetic with neon glow accents, micro-interactions, and optimized layout hierarchy.
+
 ---
 
 ## 💼 Employment & Placements

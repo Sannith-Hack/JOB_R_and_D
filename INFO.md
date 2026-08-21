@@ -10,7 +10,8 @@
 - **Role / Specialization:** Full-Stack Engineer | Backend & Distributed Systems | Data Analyst | Agentic AI Specialist
 - **Email:** sunnysunnit@gmail.com
 - **Phone:** +91 7498461916
-- **Location:** Telangana, India
+- **Location:** Warangal,Telangana, India
+- **Languages Known (Spoken/Natural):** English, Hindi, Telugu
 - **GitHub:** [github.com/Sannith-Hack](https://github.com/Sannith-Hack)
 - **LinkedIn:** [linkedin.com/in/sannith-pasunooti-183b86302](https://www.linkedin.com/in/sannith-pasunooti-183b86302/)
 - **YouTube:** [@Ronnyroy](https://www.youtube.com/@Ronnyroy)
@@ -40,12 +41,25 @@
 
 ## 🎓 3. Education & Employment Placements
 
-### Education
+### Education Summary Table
+
+| Degree / Specialization | Institute | Score / CGPA | Timeline |
+|---|---|---|---|
+| **B.Tech in Computer Science and Engineering** | Kakatiya University College of Engineering and Technology (KUCE&T) | **8.5 CGPA** | 2023 - 2027 |
+| **Intermediate (MPC)** | Geesukunda Jr College, Telangana | **90.8% (908/1000)** | 2021 - 2023 |
+| **10th Grade (CBSE)** | Vikas English Medium High School | **69%** | Grad. 2021 |
+
+### Education Details
 - **B.Tech in Computer Science and Engineering (CSE) — 4th Year (2023 - 2027)**
   - **Institution:** Kakatiya University College of Engineering and Technology (KUCET), Warangal, Telangana.
+  - **CGPA:** **8.5 / 10**
   - **Core Coursework:** Data Structures & Algorithms, Database Management Systems (DBMS), Operating Systems, Computer Networks, Software Engineering, Cloud Computing, Artificial Intelligence.
 - **Intermediate (MPC - Mathematics, Physics, Chemistry) (2021 - 2023)**
   - **Institution:** Geesukunda Junior College, Telangana.
+  - **Score:** **90.8% (908 / 1000)**
+- **10th Grade (CBSE) (Grad. 2021)**
+  - **Institution:** Vikas English Medium High School.
+  - **Score:** **69%**
 
 ### Campus Placement
 - **Company:** **BrightLine Management Solutions**
@@ -66,6 +80,7 @@
 | **Databases & Vector Stores** | PostgreSQL, SQLite3, ChromaDB (Vector Store), MySQL, Supabase (Postgres BaaS), Oracle, Microsoft SQL Server |
 | **AI, RAG & Data Science** | LangChain, Llama 3.3-70b (Groq API), Google Gemini 1.5 Flash API, HuggingFace Embeddings (`all-MiniLM-L6-v2`), RAG, Prompt Engineering, Agentic Tool Calling & Memory Loops, Tableau, Excel, Data Modeling |
 | **Cloud & DevOps** | AWS (EC2, S3, LAMP Stack), Supabase, Firebase, Vercel, Render, Docker, Docker Compose, GitHub Actions, Cloudflare Tunnels, Linux/Unix Shell Scripting, Ventoy |
+| **Spoken Languages** | English (Good), Hindi (Fluent / Professional), Telugu (Native / Fluent) |
 | **Hardware & Electronics** | ESP8266 (NodeMCU), ESP32 (Wi-Fi/BLE), Arduino, Micro-soldering (8/10), Component-level PC Diagnostics (8/10), 18650 Li-ion Spot Welding & Custom BMS (12V/48V/60V), USB Power Delivery (PD), TP4056, DHT11 Sensors, 16x2 LCDs, 6-Relay H-Bridge Arrays |
 | **OS & Device Modding** | Android Custom ROMs (Evolution X), Magisk Rooting, OEM Unlocking, Device Identifier Spoofing |
 
@@ -105,16 +120,17 @@
   - Physical quest rep counters and automated penalty quests for missed deadlines.
   - Optimized for the React Native Hermes engine for sub-second cold boot times.
 
-### 4. Keyboard-Combat-for-KUCE-T
-- **Role:** Lead Full-Stack Engineer
+### 4. Keyboard-Combat-for-KUCE-T (KU Fest 2026 Tech Tournament)
+- **Role:** Lead Full-Stack Engineer & Event Organizer
 - **Tech Stack:** React (Vite), TypeScript, Tailwind CSS v4, Zustand, Supabase, Node.js (Express)
 - **GitHub:** [github.com/Sannith-Hack/Keyboard-Combat-for-KUCE-T](https://github.com/Sannith-Hack/Keyboard-Combat-for-KUCE-T.git)
-- **Description:** Real-time competitive typing contest web application engineered for college tech fests with multi-tiered difficulty and live scoreboards.
+- **Description:** Real-time competitive typing & speed coding contest web application engineered and conducted live for **KU Fest 2026** with multi-tiered difficulty, anti-cheat validation, and live scoreboards.
 - **Key Highlights & Architecture:**
   - Live broadcast leaderboards with sub-100ms score propagation via Supabase real-time channels.
   - State management powered by lightweight Zustand stores.
   - Anti-cheat deduplication and session validation enforced via Node.js/Express API layer.
-  - Admin telemetry dashboard for managing rounds, participants, and disqualifications.
+  - Admin telemetry dashboard for managing rounds, participants, and disqualifications during the live campus event.
+  - Successfully hosted hundreds of concurrent participants during the KU Fest 2026 tech competition.
 
 ### 5. MindFlow AI (Mental Stress Detector & Advisor)
 - **Role:** Full-Stack & AI Engineer
@@ -241,8 +257,10 @@
 
 ---
 
-## 🏅 7. Official Badges & Developer Honors
+## 🏅 7. Official Badges, Honors & Leadership
 
+- **College Leadership & Event Organization (KU Fest 2026):**
+  - **Lead Technical Coordinator & Organizer – Hackathon & Keyboard Combat:** Organized and conducted the college **Hackathon** and the **Keyboard Combat** live coding/typing championship during **KU Fest 2026** at Kakatiya University College of Engineering and Technology (KUCET). Managed full technical infrastructure, problem statement design, anti-cheat validation, and live score propagation for hundreds of participants.
 - **Google Developer Program:**
   - Premium Tier Member (Jan 2026)
   - Google Cloud Innovator (Jul 2024)
@@ -259,9 +277,13 @@
 
 ## 📝 8. Pre-Formulated Resume Bullet Points (Ready to Copy-Paste)
 
+### For Leadership, Hackathons & Event Organization
+- Organized and conducted the **College Hackathon** and **Keyboard Combat Championship** for **KU Fest 2026** at KUCET, designing competitive problem tracks and managing event operations for 200+ student participants.
+- Engineered and deployed the real-time scoring platform **Keyboard-Combat-for-KUCE-T**, coordinating tournament rounds, anti-cheat validation, and sub-100ms live leaderboard broadcasts.
+
 ### For Full-Stack & Web Developer Resumes
 - Built the **KUCET College Management System** using **Next.js, TypeScript, and Docker**, implementing role-based dashboards, GPS-geofenced attendance, and real-time Server-Sent Events (SSE).
-- Developed **Keyboard-Combat-for-KUCE-T**, a real-time multiplayer typing competition web app utilizing **React, Tailwind CSS v4, Zustand, and Supabase**, handling concurrent live leaderboard broadcasts with <100ms latency.
+- Developed **Keyboard-Combat-for-KUCE-T**, a real-time multiplayer typing competition web app utilizing **React, Tailwind CSS v4, Zustand, and Supabase**, handling concurrent live leaderboard broadcasts with <100ms latency for KU Fest 2026.
 - Engineered **MindFlow AI**, an empathetic student mental stress detector and wellness advisor powered by **Google Gemini 1.5 Flash API**, featuring stateless JWT authentication and automated PDF report compilation.
 - Designed **EcoHaven**, an e-commerce marketplace prototype on **TypeScript and Firebase**, supporting faceted search, secure user authentication, and catalog lifecycle operations.
 
@@ -288,3 +310,228 @@
 ## 🎯 9. Unique Engineering Traits & Fun Fact
 - **Hardware-Software Bridge:** Equally comfortable writing Next.js React 19 web apps, querying PostgreSQL databases, flashing custom Android ROMs via ADB, spot-welding high-voltage EV battery packs, or micro-soldering surface-mount PCB components.
 - **Fun Fact:** Proudly carries an actual recycled RAM stick as a daily keychain!
+
+---
+
+## 📋 10. Minimalist One-Page Resume Generator (Prompt & Template Specification)
+
+> **Directive for AI Agents:** When generating a resume from this document, use the template specification and prompt guidelines below as the single source of truth for design, structure, ATS optimization, and formatting.
+
+### 📝 Prompt for Resume Generation Template
+
+```markdown
+# Minimalist One-Page Resume Generator
+
+You are a professional resume designer and ATS-friendly resume writer.
+
+I have provided a **contacts/information file containing all available information about the candidate**. Use that file as the **single source of truth** for the resume.
+
+Your task is to create a **clean, professional, minimalist, one-page resume** using ONLY the information available in the provided file.
+
+## Core Requirements
+
+* Resume MUST fit on **exactly one page**.
+* Use a **minimalistic black-and-white design**.
+* No colors other than black, white, and grayscale if absolutely necessary.
+* No decorative graphics, icons, photos, skill bars, rating circles, progress bars, or unnecessary visual elements.
+* Do not use emojis.
+* Do not invent, assume, or fabricate any information.
+* Do not add placeholder information unless absolutely required.
+* Do not repeat the same information in multiple sections.
+* Prioritize the candidate's strongest and most relevant information.
+* Keep the resume highly readable and ATS-friendly.
+* Use consistent spacing, alignment, indentation, typography, and hierarchy.
+
+## Visual Style
+
+Use a modern, professional, minimalist layout:
+
+* White background.
+* Black text.
+* Clean sans-serif typography.
+* Candidate's name should be the largest text on the page.
+* Contact information should appear directly below the name.
+* Use clear section headings.
+* Section headings should be visually distinct using bold text and subtle horizontal separators.
+* Keep margins compact but professional.
+* Avoid excessive whitespace.
+* Maintain balanced spacing between sections.
+* Use consistent bullet indentation throughout.
+* Keep everything aligned to a common left margin.
+* Use bold text selectively for important information such as job titles, project names, degrees, or organizations.
+
+## Recommended Resume Structure
+
+Use the following order whenever the candidate's information supports it:
+
+1. **NAME**
+   * Full name
+   * Phone
+   * Email
+   * LinkedIn
+   * GitHub / Portfolio
+   * Location
+
+2. **PROFESSIONAL SUMMARY**
+   * 2–3 concise lines.
+   * Summarize the candidate's background, strongest skills, and career direction.
+   * Do not write a generic objective.
+   * Only include information supported by the source file.
+
+3. **EDUCATION**
+   Format as a clean, minimalist **Academic Score Table** (or clearly aligned tabular structure) with subtle borders:
+   * **Table Headers:** `DEGREE / SPECIALIZATION` | `INSTITUTE` | `SCORE / CGPA` | `TIMELINE`
+   * **Rows:**
+     - `B.Tech in Computer Science and Engineering` | `Kakatiya University (KUCE&T)` | `8.5 CGPA` | `2023 - 2027`
+     - `Intermediate (MPC)` | `Geesukunda Jr College` | `90.8% (908/1000)` | `2021 - 2023`
+     - `10th Grade (CBSE)` | `Vikas English Medium High School` | `69%` | `Grad. 2021`
+
+4. **EXPERIENCE**
+   For each position:
+   **Job Title — Organization**
+   *Location | Dates*
+   * Use 2–4 concise achievement-oriented bullet points.
+   * Focus on responsibilities, technologies, contributions, and measurable results.
+   * Do not create achievements that are not present in the source information.
+
+5. **PROJECTS**
+   For each important project:
+   **Project Name**
+   * One concise description.
+   * Technologies/tools used.
+   * Key contribution or outcome.
+   * Include GitHub/demo link if available.
+
+6. **TECHNICAL SKILLS**
+   Organize skills compactly instead of using large lists.
+   **Languages:** ...
+   **Frameworks/Libraries:** ...
+   **Databases:** ...
+   **Tools/Platforms:** ...
+   **Other / Spoken Languages:** ...
+
+7. **CERTIFICATIONS / ACHIEVEMENTS**
+   * Include only the most relevant certifications, awards, achievements, or recognitions.
+   * Keep each entry concise.
+
+8. **ADDITIONAL INFORMATION**
+   * Include only if there is meaningful information remaining that strengthens the candidate's profile.
+   * Examples: leadership, volunteering, publications, competitive programming, spoken languages (English, Hindi, Telugu), extracurricular achievements, etc.
+
+## One-Page Optimization Rules
+
+The one-page constraint is extremely important.
+
+If the information is too long:
+1. Remove redundant content.
+2. Remove weak or irrelevant projects.
+3. Reduce long descriptions.
+4. Keep the strongest achievements.
+5. Combine related skills.
+6. Shorten bullet points without losing important information.
+7. Reduce unnecessary section spacing.
+8. Use compact typography and spacing.
+9. Never sacrifice readability just to fit more content.
+10. Never create a second page.
+
+Do NOT simply shrink the font excessively to force the resume onto one page.
+
+## Content Rules
+
+Use the candidate's actual information from the provided contacts file.
+
+You may:
+* Correct obvious grammar mistakes.
+* Improve sentence structure.
+* Convert descriptions into concise professional resume bullet points.
+* Reorganize information for better presentation.
+* Remove redundant information.
+* Prioritize relevant information.
+* Condense lengthy descriptions.
+
+You MUST NOT:
+* Invent employment history.
+* Invent projects.
+* Invent technologies.
+* Invent certifications.
+* Invent achievements.
+* Invent metrics.
+* Invent dates.
+* Invent educational qualifications.
+* Guess missing information.
+* Add fake LinkedIn/GitHub/portfolio URLs.
+
+If a piece of information is missing, simply omit it.
+
+## Formatting Hierarchy
+
+Use this hierarchy consistently:
+
+**CANDIDATE NAME**  
+Contact information  
+
+**SECTION HEADING**  
+
+**Position / Degree / Project Name**  
+Organization / Institution | Date  
+* Concise bullet point  
+* Concise bullet point  
+* Concise bullet point  
+
+Maintain consistent:
+* Heading sizes
+* Font weights
+* Line spacing
+* Bullet indentation
+* Section spacing
+* Date alignment
+* Margins
+
+## ATS Compatibility
+
+The resume should remain easy for an ATS to parse.
+
+Avoid:
+* Complex tables
+* Multi-column layouts unless absolutely necessary
+* Text embedded inside images
+* Decorative icons
+* Graphics
+* Skill progress bars
+* Headers/footers containing critical information
+* Unusual fonts
+* Excessive styling
+
+Prefer a straightforward single-column structure.
+
+## Final Quality Check
+
+Before producing the final resume, verify:
+* [ ] Exactly one page
+* [ ] Black-and-white minimalist appearance
+* [ ] All information comes from the source file
+* [ ] No fabricated information
+* [ ] No unnecessary sections
+* [ ] No duplicated information
+* [ ] Contact details are clearly visible
+* [ ] Strongest experience/projects are prioritized
+* [ ] Skills are compactly organized
+* [ ] Typography is consistent
+* [ ] Bullet indentation is consistent
+* [ ] Section spacing is consistent
+* [ ] Resume is ATS-friendly
+* [ ] No awkward page breaks
+* [ ] No excessive empty space
+* [ ] No excessively small text
+
+## Final Output
+
+Generate a downloadable Single page resume PDF as a **professional one-page resume**, A downloadable PDF not an explanation of how to create one.
+
+The final result should look like a resume that could realistically be submitted to a company for a professional job application.
+
+**Design principle:**
+> Less decoration, more information clarity.  
+> Clean typography, strong hierarchy, excellent spacing, and maximum professionalism.
+```
+

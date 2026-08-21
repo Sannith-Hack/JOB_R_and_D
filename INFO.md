@@ -41,17 +41,9 @@
 
 ## 🎓 3. Education & Employment Placements
 
-### Education Summary Table
-
-| Degree / Specialization | Institute | Score / CGPA | Timeline |
-|---|---|---|---|
-| **B.Tech in Computer Science and Engineering** | Kakatiya University College of Engineering and Technology (KUCE&T) | **8.5 CGPA** | 2023 - 2027 |
-| **Intermediate (MPC)** | Geesukunda Jr College, Telangana | **90.8% (908/1000)** | 2021 - 2023 |
-| **10th Grade (CBSE)** | Vikas English Medium High School | **69%** | Grad. 2021 |
-
-### Education Details
+### Education
 - **B.Tech in Computer Science and Engineering (CSE) — 4th Year (2023 - 2027)**
-  - **Institution:** Kakatiya University College of Engineering and Technology (KUCET), Warangal, Telangana.
+  - **Institution:** Kakatiya University College of Engineering and Technology (KUCE&T), Warangal, Telangana.
   - **CGPA:** **8.5 / 10**
   - **Core Coursework:** Data Structures & Algorithms, Database Management Systems (DBMS), Operating Systems, Computer Networks, Software Engineering, Cloud Computing, Artificial Intelligence.
 - **Intermediate (MPC - Mathematics, Physics, Chemistry) (2021 - 2023)**
@@ -379,12 +371,10 @@ Use the following order whenever the candidate's information supports it:
    * Only include information supported by the source file.
 
 3. **EDUCATION**
-   Format as a clean, minimalist **Academic Score Table** (or clearly aligned tabular structure) with subtle borders:
-   * **Table Headers:** `DEGREE / SPECIALIZATION` | `INSTITUTE` | `SCORE / CGPA` | `TIMELINE`
-   * **Rows:**
-     - `B.Tech in Computer Science and Engineering` | `Kakatiya University (KUCE&T)` | `8.5 CGPA` | `2023 - 2027`
-     - `Intermediate (MPC)` | `Geesukunda Jr College` | `90.8% (908/1000)` | `2021 - 2023`
-     - `10th Grade (CBSE)` | `Vikas English Medium High School` | `69%` | `Grad. 2021`
+   Format as clean, minimalist plain text entries (Degree, Institution, Timeline, Score/CGPA):
+   * **B.Tech in Computer Science and Engineering** — Kakatiya University (KUCE&T) | *2023 - 2027* (CGPA: 8.5/10)
+   * **Intermediate (MPC)** — Geesukunda Jr College | *2021 - 2023* (Score: 90.8% - 908/1000)
+   * **10th Grade (CBSE)** — Vikas English Medium High School | *Grad. 2021* (Score: 69%)
 
 4. **EXPERIENCE**
    For each position:

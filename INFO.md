@@ -358,13 +358,15 @@ Use a modern, professional, minimalist layout:
 
 Use the following order whenever the candidate's information supports it:
 
-1. **NAME**
-   * Full name
-   * Phone
-   * Email
-   * LinkedIn
-   * GitHub / Portfolio
-   * Location
+1. **NAME & CONTACT INFORMATION**
+   * Full Name: **Pasunooti Sannith (P. Sannith)**
+   * Phone: **+91 7498461916**
+   * Email: **sunnysunnit@gmail.com**
+   * Location: **Warangal, Telangana, India**
+   * Portfolio: **[https://sannith-hack.github.io/Portfolio/](https://sannith-hack.github.io/Portfolio/)**
+   * GitHub: **[https://github.com/Sannith-Hack](https://github.com/Sannith-Hack)**
+   * LinkedIn: **[https://www.linkedin.com/in/sannith-pasunooti-183b86302/](https://www.linkedin.com/in/sannith-pasunooti-183b86302/)**
+   * Spoken Languages: **English, Hindi, Telugu**
 
 2. **PROFESSIONAL SUMMARY**
    * 2–3 concise lines.
@@ -460,7 +462,7 @@ If a piece of information is missing, simply omit it.
 Use this hierarchy consistently:
 
 **CANDIDATE NAME**  
-Contact information  
+Phone | Email | Location | Portfolio: [sannith-hack.github.io/Portfolio](https://sannith-hack.github.io/Portfolio/) | GitHub: [Sannith-Hack](https://github.com/Sannith-Hack) | LinkedIn  
 
 **SECTION HEADING**  
 

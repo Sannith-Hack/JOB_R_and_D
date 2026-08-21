@@ -13,6 +13,7 @@
 - **Location:** Warangal,Telangana, India
 - **Languages Known (Spoken/Natural):** English, Hindi, Telugu
 - **GitHub:** [github.com/Sannith-Hack](https://github.com/Sannith-Hack)
+- **Portfolio:** [sannith-hack.github.io/Portfolio](https://sannith-hack.github.io/Portfolio/)
 - **LinkedIn:** [linkedin.com/in/sannith-pasunooti-183b86302](https://www.linkedin.com/in/sannith-pasunooti-183b86302/)
 - **YouTube:** [@Ronnyroy](https://www.youtube.com/@Ronnyroy)
 - **Instagram:** [@sunebhai_mpc](https://www.instagram.com/sunebhai_mpc/)
@@ -221,6 +222,7 @@
 ### 15. Sannith's Interactive Developer Portfolio
 - **Role:** Creator & Architect
 - **Tech Stack:** HTML5, CSS3 Glassmorphism, JavaScript ES6 Modules, Chart.js, Mermaid.js, AOS
+- **Live URL:** [https://sannith-hack.github.io/Portfolio/](https://sannith-hack.github.io/Portfolio/)
 - **GitHub:** [github.com/Sannith-Hack/Portfolio](https://github.com/Sannith-Hack/Portfolio)
 - **Description:** Modular single-page developer portfolio with simulated bash terminal, interactive SQL console, live backend telemetry, radar chart, and modal certificate inspector.
 

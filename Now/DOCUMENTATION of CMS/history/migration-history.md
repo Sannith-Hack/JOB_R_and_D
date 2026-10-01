@@ -1,0 +1,298 @@
+# Database & Infrastructure Migration Log
+
+**Last Updated:** August 31, 2026  
+**Status:** Historical & Architectural Log  
+**Scope:** Drizzle ORM Schema Migrations (`0000` to `0018`), Storage Key Transformations, and Infrastructure Upgrades.
+
+---
+
+## 1. Drizzle ORM Migration Evolution (`0000` to `0018`)
+
+The database schema evolution is managed version-by-version using Drizzle Kit. Each migration SQL script in `drizzle/` represents a milestone in database structure and data integrity.
+
+| Migration Tag | File Name | Key Schema Transformations & Features Introduced |
+| :--- | :--- | :--- |
+| **`0000`** | `0000_flippant_fabian_cortez.sql` | **Initial Baseline Schema:** Created core tables for Identity (`students`, `clerks`, `principal`), Academic (`college_info`, `syllabus_subjects`), Registry (`student_personal_details`), and Operations (`student_attendance`, `student_marks`). |
+| **`0001`** | `0001_sharp_polaris.sql` | **Session Management & Device Tracking:** Introduced `user_sessions` and `otp_codes` tables with HTTP-only token tracking, remote revocation, and IP/User-Agent heuristics. |
+| **`0002`** | `0002_flat_mephistopheles.sql` | **Financial Infrastructure:** Added `student_payments` and `scholarship_sanctions` tables for institutional fee tracking and government reimbursement management. |
+| **`0003`** | `0003_zippy_agent_zero.sql` | **Financial Integrity Guards:** Created `idempotency_keys` table for transaction locks and added SHA-256 fingerprinting to payment evidence. |
+| **`0004`** | `0004_funny_starfox.sql` | **Security Audit & Push Engine:** Added `security_events`, `audit_logs`, `push_subscriptions`, and `notification_preferences` tables. |
+| **`0005`** | `0005_redundant_adam_destine.sql` | **Academic Timetable & Calendar:** Added `academic_calendar`, `branch_timetable`, and `faculty_subject_assignments` for multi-semester HOD scheduling. |
+| **`0006`** | `0006_cool_yellowjacket.sql` | **Address & Admission Schema:** Expanded `student_personal_details` and `student_admission_drafts` with Current and Permanent address columns. |
+| **`0007`** | `0007_flippant_harry_osborn.sql` | **SC Sub-Caste & EWS Standard:** Expanded category enum to support four SC sub-castes (`SC-A`, `SC-B`, `SC-C`, `SC-D`) and standardized `OC-EWS` to `EWS`. |
+| **`0008`** | `0008_solid_black_tarantula.sql` | **Academic Data Archival Engine:** Created `archive_students`, `archive_student_personal_details`, `archive_student_attendance`, `archive_student_marks`, `archive_student_payments`, and `archive_operations_log` tables. |
+| **`0009`** | `0009_tiny_sabretooth.sql` | **Restoration Constraint Alignment:** Added fallback default column parameters (`session_pin`, `attendance_date`, `expires_at`) to match operational constraints during data restoration. |
+| **`0010`** | `0010_tan_cerebro.sql` | **Institutional Asset Metadata:** Added institutional asset protection tracking and logical asset key resolution tables. |
+| **`0011`** | `0011_curious_terrax.sql` | **Payment Screenshot Consolidation:** Consolidated request payment evidence into `student_request_images` sidecar table and safely dropped legacy redundant column `student_requests.payment_screenshot`. |
+| **`0012`** | `0012_clerk_registration_requests.sql` | **Staff Onboarding & Branch Verification:** Added `clerk_registration_requests` table for multi-role pending staff approvals and HOD branch constraint validation. |
+| **`0013`** | `0013_thin_outlaw_kid.sql` | **Performance & Foreign Key Indexes:** Optimized indexes across active operations and registration lookup tables. |
+| **`0014`** | `0014_zero_clerk_hard_break.sql` | **Zero Clerk Hard Break & Staff Unification:** Migrated all role enums from `clerk` to `staff`, dropped legacy `clerks` and `clerk_registration_requests` tables. |
+| **`0015`** | `0015_database_backup_logs.sql` | **Database Backup & Recovery Engine:** Created `database_backup_logs` operational metadata table tracking backup filenames, SHA-256 checksums, durations, types, and statuses. |
+| **`0016`** | `0016_elective_groups.sql` | **Elective Groups & Curriculum Structure:** Created `elective_groups` and `elective_group_subjects` tables for professional, open, and mandatory non-credit course buckets. |
+
+---
+
+## 2. Cloudinary & Storage Key Migrations
+
+Over the course of production hardening, the storage architecture underwent three major migrations:
+
+```mermaid
+graph TD
+    Phase1["Phase 1: Legacy Absolute Paths (/uploads/pfp/24KUEC001.jpg)"] --> Phase2["Phase 2: Storage Key Migration (scripts/migrate-storage-keys.js)"]
+    Phase2 --> Phase3["Phase 3: Complete Image Pipeline Reset (scripts/reset-image-pipeline.mjs)"]
+    Phase3 --> Phase4["Canonical Storage Standard: Relative Key kucet/folder/uuid.ext"]
+```
+
+### A. Storage Key Migration Script (`scripts/migrate-storage-keys.js`)
+- **Objective:** Stripped absolute domain URLs (`https://res.cloudinary.com/...`) and local directory prefixes (`uploads/`, `public/`) from all database image columns.
+- **Result:** Transformed legacy records into clean relative storage keys (e.g., `requests/pfp/7a59662b-8a4e.webp`).
+
+### B. Complete Pipeline Reset & Canonical Rebuild (`scripts/reset-image-pipeline.mjs`)
+- **Executed:** Session 200 (August 10, 2026).
+- **Actions Performed:**
+  1. Deleted 181 orphaned user-uploaded assets from Cloudinary across root category namespaces (`students/`, `requests/`, `clerks/`, `admission_drafts/`, `certificates/`) and `kucet/` subtree folders.
+  2. Preserved institutional branding media under `kucet/institution/`.
+  3. Reset corrupted image columns to `NULL` across operational tables.
+  4. Enforced randomized UUID filenames (`crypto.randomUUID()`) for all future uploads.
+
+---
+
+## 3. Deprecations & Schema Transformations
+
+- **Legacy Column Drop (`student_requests.payment_screenshot`):** Consolidated into sidecar table `student_request_images` via migration `0011_curious_terrax.sql`.
+- **Legacy Category Enum (`OC-EWS`):** Standardized to `EWS` across database constraints, validation schemas, and import sanitizers.
+- **Legacy Local Path Fallbacks (`process.cwd() + '/public/uploads'`):** Replaced with central configuration `src/lib/storage-config.js` and `LocalStorageProvider.getLocalStorageBasePath()`.
+- **Session 207 — `clerk_registration_requests` renamed → `staff_registration_requests`:** Columns `branch`, `department`, `mobile` dropped; new columns `requested_role`, `academic_affiliations` (JSON), `email_verified_at` added.
+
+---
+
+## 4. Session 206 Hardening & Environment Synchronization
+
+- **QStash Webhook Signature Verification:** Implemented `verifySignatureAppRouter` across all 7 background endpoints (`archive-job`, `notification-dispatch`, `generate-pdf`, `report-generation`, `send-email`, `bulk-import`, `dlq`).
+- **Web Push Engine (VAPID):** Added `PushNotificationService.sendToRecipients()` with `web-push`, automatic VAPID authorization, and dead subscription pruning (404/410).
+- **Synchronous Fallback Processing:** Added transaction-level batch processing for admissions bulk import when external queueing services are disabled.
+- **Environment Template Alignment:** Rebuilt `.env.example` and `DEPLOYMENT_PACKAGE/.env.production.template` to reflect the 32 active variables across 12 distinct functional categories.
+
+---
+
+## 5. Session 207 (testvanilla) — Staff Identity System Overhaul
+
+> ⚠️ **Migration not yet run.** This branch is pre-merge. Run `npm run db:generate` then `npm run db:migrate` before deploying.
+
+### New Tables Introduced
+
+| Table | Schema File | Purpose |
+|---|---|---|
+| `staff_accounts` | `identity.js` | Unified staff identity (replaces `clerks` for new hires) |
+| `staff_roles` | `identity.js` | Role code lookup (`FACULTY`, `ADMISSION_CLERK`, `SCHOLARSHIP_CLERK`) |
+| `staff_account_roles` | `identity.js` | Many-to-many: staff ↔ roles with `assigned_by` audit |
+| `staff_academic_affiliations` | `identity.js` | Faculty → department + program links (replaces `clerks.branch`) |
+| `staff_account_activation_tokens` | `identity.js` | SHA-256 hashed one-time activation tokens (48hr expiry) |
+| `academic_departments` | `academic.js` | Institutional department registry |
+| `academic_programs` | `academic.js` | Programs/courses per department |
+
+### Modified Table
+
+| Table | Was | Change |
+|---|---|---|
+| `staff_registration_requests` | `clerk_registration_requests` | Renamed + 3 cols dropped + 3 cols added (`requested_role`, `academic_affiliations JSON`, `email_verified_at`) |
+
+### Required Seed SQL After Migration
+
+```sql
+-- Seed staff_roles
+INSERT INTO staff_roles (role_code, description) VALUES
+  ('FACULTY',           'Teaching staff — course and attendance management'),
+  ('ADMISSION_CLERK',   'Manages student admissions and enrollment'),
+  ('SCHOLARSHIP_CLERK', 'Manages scholarship applications and payments');
+
+-- Seed academic_departments
+INSERT INTO academic_departments (department_code, department_name, is_active) VALUES
+  ('CSE',   'Computer Science & Engineering', 1),
+  ('ECE',   'Electronics & Communication Engineering', 1),
+  ('MECH',  'Mechanical Engineering', 1),
+  ('CIVIL', 'Civil Engineering', 1),
+  ('EEE',   'Electrical & Electronics Engineering', 1),
+  ('IT',    'Information Technology', 1);
+```
+
+### Cookie Invalidation Warning
+All `clerk_auth` sessions are invalidated on deployment. Staff must re-login. Existing `clerks` table records remain intact — only new registrations go to `staff_accounts`.
+
+### Full Analysis
+See [Session 207 Complete Change Analysis](./session-207-testvanilla-changes.md) for exhaustive schema definitions, API reference, workflow diagrams, and deployment checklist.
+
+---
+
+## 5. Session 207 Infrastructure & Storage Pipeline Hardening (August 21, 2026)
+
+### Infrastructure & Deployment Orchestration Updates
+- **Canonical Storage Hierarchy**: Standardized host media persistence to `/var/www/kucet-storage` and container mount to `/app/storage`. Removed obsolete legacy `/var/www/kucet-storage/public` paths across all deployment manifests and health checks.
+- **Least-Privilege Storage Initialization**: Created [`DEPLOYMENT_PACKAGE/SCRIPTS/prepare-storage.sh`](../../DEPLOYMENT_PACKAGE/SCRIPTS/prepare-storage.sh) to safely configure permissions on upload subdirectories (`students/pfp`, `staff/signatures`, `requests/proofs`, etc.) for Docker user `nextjs` (`UID 1001`, `GID 1001`) with mode `775` while keeping institutional assets read-only (`755`) and database backups locked down (`/var/kucet-db-backup`, `700`). Completely eliminated `chmod 777`.
+- **Idempotent Network Attachment**: Implemented inspect-before-connect logic in [`deploy.sh`](../../DEPLOYMENT_PACKAGE/SCRIPTS/deploy.sh) and [`rollback.sh`](../../DEPLOYMENT_PACKAGE/SCRIPTS/rollback.sh), eliminating Docker daemon conflict errors.
+- **Diagnostic Health Check**: Rebuilt [`health-check.sh`](../../DEPLOYMENT_PACKAGE/SCRIPTS/health-check.sh) to execute active container-level write/read/delete tests inside `/app/storage/kucet/.health_test` with user-scoped temporary logs (`/tmp/kucet_health_check_${UID}.log`).
+
+---
+
+## 6. Session 207 Final Hard-Break Cleanup & Faculty Attendance Validation (August 22, 2026)
+
+### Key Engineering Milestones:
+- **Zero Backward Compatibility**: Cleaned all remaining legacy role strings (`ADMISSION_CLERK`, `SCHOLARSHIP_CLERK`), deleted string replacement fallbacks in admin approval, and enforced strict canonical staff categories (`FACULTY`, `ADMISSION_STAFF`, `SCHOLARSHIP_STAFF`).
+- **Faculty Attendance & Topic Module**: Standardized required lecture topic capture ($\ge 2$ characters, trimmed, max 500 characters), unified Topic Modal on both desktop and mobile attendance sheets, and secured PATCH topic API with session ownership validation.
+- **Admission Drafts Auto-Loading**: Added zero-click mount fetching in admission requests and wired realtime SSE broadcasts (`ADMISSION_DRAFT_CREATED`, `ADMISSION_DRAFT_UPDATED`, `ADMISSION_DRAFT_FINALIZED`).
+- **Storage & CSP Fixes**: Added asset proxy fallback to Cloudinary CDN on serverless/Render environments (`/api/assets/view/[...path]`) and resolved CSP blob worker warnings with `child-src 'self' blob:;`.
+- **Test Suite Verification**: 50/50 test files passed (370/370 unit tests passed), 0 ESLint errors, 203/203 Next.js routes built.
+
+---
+
+## 7. Session 209 Multi-Service Production Deployment & Elective Groups Architecture (August 31, 2026)
+
+### Key Engineering Milestones:
+- **Elective Groups & Curriculum Structure (`src/db/schema/academic.js`)**:
+  - Introduced `elective_groups` table with `group_type` enum (`PROFESSIONAL_ELECTIVE`, `OPEN_ELECTIVE`, `MANDATORY_NON_CREDIT`, `OTHER`), `subject_mode` (`theory`/`lab`), sequence numbers, and unique constraint on `(branch, semester, group_code)`.
+  - Introduced `elective_group_subjects` junction table with foreign keys to `elective_groups.id` and `syllabus_subjects.subject_code` with `onDelete: 'restrict'`.
+  - Upgraded `/api/staff/hod/syllabus` with full CRUD action dispatcher (`ADD_CORE_SUBJECT`, `ADD_ELECTIVE_GROUP`, `ADD_ELECTIVE_SUBJECT`, `EDIT_SUBJECT`, `EDIT_ELECTIVE_GROUP`, `DELETE_CORE_MAPPING`, `DELETE_ELECTIVE_GROUP`, `REMOVE_FROM_GROUP`) and authorized branch boundaries.
+  - Revamped `SyllabusManager.js` UI with interactive modals, Theory/Lab badges, and real-time state synchronization.
+- **Docker Compose Multi-Service Lifecycle**:
+  - Updated `deploy.sh` and `rollback.sh` to build and manage both `app` and `realtime` containers concurrently (`up -d --build --no-deps app realtime`).
+  - Removed `DEPLOYMENT_PACKAGE` exclusion from `.dockerignore` to allow BuildKit to copy `Dockerfile.realtime` configuration files.
+  - Replaced `express` with Node.js built-in `http.createServer` in `socket-server.js` for zero-dependency native health checking on port 4000.
+  - Hardened `health-check.sh` with container classification (critical vs optional) and HTTP retry loops, resolving Nginx upstream DNS resolution crash loops and preventing spurious deployment rollbacks.
+- **Test Suite & Build Verification**: 57/57 test files passed (437/437 unit tests passed), 208 Next.js routes built.
+
+---
+
+## 8. Session 210 — Admission Soft Rejection, Status History & Controlled Restoration (August 31, 2026)
+
+### Problem & Forensic Analysis:
+Prior to Session 210, rejecting a student admission draft executed an unrecoverable hard deletion (`db.delete(studentAdmissionDrafts)` and `storage.delete(pfp, signature)`), permanently wiping student records and proof assets upon rejection.
+
+### Architectural Solution:
+- **Migration `0018_admission_rejection_and_history.sql`**:
+  - Extended `student_admission_drafts.status` enum to `('DRAFT','PROCESSED','FINALIZED','REJECTED')`.
+  - Added audit metadata columns: `rejection_reason`, `rejected_by_staff_id`, `rejected_at`, `restored_by_staff_id`, `restored_at`, `restoration_reason`.
+  - Created immutable `admission_status_history` table (`id`, `draft_id`, `old_status`, `new_status`, `reason`, `changed_by_user_id`, `changed_by_user_type`, `metadata`, `created_at`).
+- **Atomic Transactional Rejection (`PUT /api/staff/admission/drafts/[id]`)**:
+  - Transitions status to `REJECTED` in a database transaction.
+  - Inserts transition record into `admission_status_history` and `audit_logs`.
+  - Preserves all uploaded candidate media and identity documentation intact.
+- **Application-Level Controlled Restoration (`POST /api/staff/admission/drafts/[id]/restore`)**:
+  - Allows authorized staff/admin to review rejected applications and restore them back to the intake queue with a mandatory restoration reason and audit logging.
+- **Admission Queue UI Overhaul (`AdmissionRequestsPanel.js` & `AdmissionModal.js`)**:
+  - Added dedicated **Rejected Applications** tab with quick search, rejection reason previews, full lifecycle audit history timeline, and 1-click application restoration.
+- **Test Suite Verification**: 58/58 test files passed (454/454 unit tests passed).
+
+---
+
+## 9. Session 212 — System-Wide Engineering Audit, Security Hardening & Campus Wi-Fi Realignment (September 09, 2026)
+
+### Key Engineering Milestones:
+- **P0 Technical Assessment Auth & IDOR Hardening (`src/app/api/events/quiz/`)**:
+  - Protected `GET /api/events/quiz/session`, `POST /api/events/quiz/save-answer`, and `POST /api/events/quiz/submit` with `auth: ['student', 'staff', 'admin']` in `wrapHandler`.
+  - Authoritatively bound candidate roll number/staff ID via `ParticipantService.resolveAuthoritativeUser(user)`; blocked candidate ID spoofing and unauthorized peer mutations with `403 Forbidden`.
+- **P0 Campus Wi-Fi Attendance Realignment (`src/app/api/student/attendance/verify/route.js`)**:
+  - Eliminated false-positive proxy penalties caused by egress NAT IP and User-Agent sharing among classroom peers on campus Wi-Fi access points.
+  - Retained strict hardware device lock (`device_hash` / `finalDeviceId` check) while converting network IP/UA collisions into diagnostic audit telemetry (`[ATTENDANCE_NETWORK_TELEMETRY]`).
+- **P1 Information Disclosure & Bug Tracker Sanitization (`src/app/api/bugs/route.js`)**:
+  - Added privilege-aware payload filtering: unauthenticated public viewers receive masked reporter identifiers (`2100****`, `fa***@kucet.ac.in`) and stripped `browser_info`, while authenticated admins/developers receive full operational metadata.
+- **P2 Storage Alert Endpoint Authorization (`src/app/api/public/system/storage-alert/route.js`)**:
+  - Enforced `CRON_SECRET` / `INTERNAL_API_SECRET` Bearer header validation or Super Admin session checks, preventing unauthenticated denial-of-service and transactional email exhaustion.
+- **P1 Memory Leak & Resource Lifecycle Guardrails**:
+  - Bounded in-memory `moveRateLimitMap` in `ChessEngineService.js` with self-pruning eviction (size > 500, 10s cutoff).
+  - Added `isMounted` cancellation flag to async Supabase client loader in `ChessGameView.js`, eliminating unmounted WebSocket subscription leaks.
+- **P2 Dashboard Query Optimization (`src/app/api/admin/student-stats/route.js`)**:
+  - Implemented 60-second in-memory process caching (`STATS_CACHE_TTL`) and filtered active students (`student_status = 'ACTIVE'`) to prevent full-table in-memory scanning on admin visits.
+- **Test Suite Verification**: **71/71 test files passed (577/577 unit tests passed)**, 0 ESLint errors, schema consistency verified (`drizzle-kit check`).
+
+---
+
+## 10. Session 213 — Universal Timetable Migration, Conflict Remediation, Zero-Trust Input Hardening & Realtime Synchronization (September 10, 2026)
+
+### Key Engineering Milestones:
+- **Migration `0019_timetable_instances.sql` & Production Runner Baselining**:
+  - Authored official Drizzle migration `0019_timetable_instances.sql` generating `timetable_instances` table and associating `branch_timetable.timetable_instance_id`.
+  - Registered migration entry in `drizzle/meta/_journal.json` (tag: `0019_timetable_instances`, when: `1788200000000`).
+  - Hardened `src/db/migrate.js` with Check 5 auto-detection to baseline `timetable_instances` if already physically provisioned in high-availability database clusters.
+- **Clean Schema Realignment (Zero Section & Computed Year Level)**:
+  - Eliminated redundant `year_level` column in favor of dynamic derivation `Math.ceil(semester / 2)`.
+  - Omitted `section` column from `timetable_instances` to reflect KUCET's single-intake cohort reality and aligned unique key to `(branch, semester, academic_year)`.
+- **Remediation of Self-Conflict Bug in Slot Editing (`src/app/api/staff/hod/timetable-instances/[id]/entries/route.js`)**:
+  - Fixed false-positive `400 Faculty Conflict: Instructor already assigned during this period.` by explicitly excluding the current editing slot (`ne(branchTimetable.id, existingSlotId)`).
+  - Protected against duplicate entry crashes on `uq_timetable_slot` by adopting existing slots through compound key lookups across `(branch, semester, section, day_of_week, period_number, academic_year)`.
+  - Permitted faculty members holding both `FACULTY` and `HOD` credentials to be scheduled cleanly.
+- **Zero-Trust Input Validation via Zod (`src/app/api/staff/hod/timetable-instances/`)**:
+  - Protected `POST /api/staff/hod/timetable-instances` with strict Zod validation for branch, semester (1-8), and academic year format (`^\d{4}-\d{2}$`).
+  - Protected `PUT /api/staff/hod/timetable-instances/[id]` against data truncation and enum corruption using `z.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED'])`.
+- **Super Admin Timetable Access (`FacultyService.getHodBranches`)**:
+  - Updated `FacultyService.getHodBranches(staffId, userRole)` so that Super Admin sessions (`role === 'admin'`) can inspect and govern timetables across all institutional departments and programs.
+- **Realtime Synchronization Delivery to Students (`src/app/student/timetable/page.js`)**:
+  - Restored `<RealtimeListener onUpdate={handleRealtimeUpdate} />` inside `StudentTimetablePage`, enabling instantaneous background timetable re-sync whenever HOD publishes updates.
+- **Character Encoding Remediation (`UniversalTimetable.js`)**:
+  - Cleaned corrupted UTF-8 sequences (`â€“`, `â€”`) and restored standard typography.
+- **Test Suite Verification**: **72/72 test files passed (585/585 unit tests passed)**, 0 ESLint errors, Next.js 16 production build verified.
+
+---
+
+## 11. Session 214 — Subject Module Schema, Staff Accounts Keys & Elective Groups (September 11, 2026)
+
+### Key Engineering Milestones:
+- **Migration `0020_subject_module_and_elective_groups.sql`**:
+  - Migrated `faculty_subject_assignments.faculty_id` to `staff_account_id` foreign key referencing `staff_accounts.id` with `ON DELETE RESTRICT`.
+  - Added elective group tables (`elective_groups`, `elective_group_subjects`) supporting semester elective pooling.
+  - Added baseline rule 20 in `src/db/baseline-rules.js` to ensure dual-condition verification (`staff_account_id` in `faculty_subject_assignments` and `elective_groups` table existence) before applying DDL in existing environments.
+- **Test Suite Verification**: **74/74 test files passed (612/612 unit tests passed)**.
+
+---
+
+## 12. Session 215 & 216 — App Router Deep-Linking & Production Service Worker Resolution (September 18–21, 2026)
+
+### Key Engineering Milestones:
+- **Attendance Deep-Linking Route Restoration**:
+  - Restored dynamic App Router structure `/staff/faculty/attendance/[assignmentId]/take/[mode]` preserving backward compatibility with direct URL bookmarks and Playwright suites.
+- **Service Worker Navigation Redirect Resolution**:
+  - Resolved `opaqueredirect` TypeError when browsers encountered Next.js middleware 3xx auth redirects under `redirect: 'manual'` navigation mode.
+  - Enforced `redirect: 'follow'` for all navigation requests in `public/sw.js` and bumped cache to `v7`.
+  - Hardened `/offline` recovery navigation to always redirect to `/` via `window.location.replace('/')`.
+- **IST Time Machine Hours Hardening**:
+  - Enforced `hourCycle: 'h23'` in `toISTDate` (`src/lib/date.js`) to eliminate midnight hour 24 overflow distortion in ICU/Intl environments.
+
+---
+
+## 13. Session 217 — Student Achievements Schema, TiDB Collation Harmonization, Baseline Tracking & Hard 1 MB Limit (September 21–22, 2026)
+
+### Key Engineering Milestones:
+- **Migration `0021_students_achievements_schema.sql`**:
+  - Authored schema migration creating `student_achievements` table for tracking student extracurricular, technical, and professional achievements with digital certificates.
+  - Configured compound indexes: `idx_achievement_student`, `idx_achievement_type`, `idx_achievement_academic_year`, `idx_achievement_date`, and `idx_achievement_student_year`.
+  - Established `fk_achievement_student` referencing `students(id)` with `ON DELETE CASCADE`.
+- **TiDB Distributed SQL Collation Harmonization**:
+  - Removed MySQL 8.0-specific `COLLATE=utf8mb4_0900_ai_ci` and `ON UPDATE CASCADE` which caused `ERROR 1273 (HY000): Unknown collation: 'utf8mb4_0900_ai_ci'` on TiDB Cloud during GitHub Actions CI/CD deployment on `main`.
+  - Added `CREATE TABLE IF NOT EXISTS` and statement breakpoints (`--> statement-breakpoint`) conforming to Drizzle migrator standards.
+- **Automated Multi-Environment Baseline Rule 21 (`src/db/baseline-rules.js`)**:
+  - Registered Rule 21 inspecting `information_schema.tables` for `student_achievements`.
+  - If the table already exists in high-availability clusters, Drizzle automatically records the migration timestamp in `__drizzle_migrations` and prevents DDL collision crashes.
+  - Added unit test coverage in `tests/unit/db/baseline-rules.test.js`.
+- **Certificate Image Hard 1 MB Limit & Multi-Tier Compression**:
+  - Enforced strict `1,048,576 bytes` limit across client, API, and storage layers.
+  - Client modal features 3-stage progressive compression (1600px q0.8 -> 1200px q0.65 -> 1000px q0.5) with live size badge.
+  - Server endpoints (`/api/student/achievements` and `/api/student/signature`) enforce zero-trust MIME validation and buffer length verification.
+  - Storage providers (`CloudinaryStorageProvider`, `LocalStorageProvider`) enforce invariant byte checks on both buffers and base64 data URIs.
+- **Finalize Admissions Scoped Branch Filter**:
+  - Isolated branch selector on `/staff/admission/finalize` with `allowAllBranches={false}`, removing "All Branches" solely from finalization workflows while preserving global multi-branch selectors across all other pages.
+- **Test Suite Verification**: **78/78 test files passed (665/665 unit tests passed)**, 0 ESLint errors, `npm run db:check` verified 100% consistent.
+
+---
+
+## 14. Cross-References & Related Documentation
+
+- [System Architectural Decision Records (ADRs)](./architectural-decisions.md)
+- [Chronological Forensics of Resolved Incidents](./resolved-incidents.md)
+- [Database Schema Reference](../database/schema.md)
+- [Backend Architecture & Service Ecosystem](../architecture/backend.md)
+- [Production Deployment & DevOps Specification](../architecture/deployment.md)
+- [Head of Department (HOD) Console](../pages/hod-pages.md)
+- [Digital Certificate Engine](../features/certificates.md)
+- [Admissions System](../features/admissions.md)
+
+
+

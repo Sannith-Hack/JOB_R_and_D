@@ -1,0 +1,145 @@
+# Tailscale Access Architecture, Reverse Proxy & Caching Strategy
+
+## 1. Executive Infrastructure Overview
+
+The KUCET College Management System self-hosted deployment on the institutional Ubuntu server (`HP Pro Tower 280 G9 PCI Desktop PC`) operates with multi-layer traffic ingress, reverse proxying, and client-side PWA resilience:
+
+```text
+[ Public Web Visitors (No Tailscale Required) ]
+                 │
+                 ▼ (HTTPS / 443 via Public Ingress Relay / Tunnel)
+┌─────────────────────────────────────────────────────────────┐
+│  Host OS (Ubuntu Linux / HP Pro Tower 280 G9 PC)            │
+│  - Campus LAN IP: 172.100.122.210 (behind Institutional NAT)│
+│  - Tailscale Funnel / Public Ingress -> Nginx (:80)         │
+│  - Tailscale SSH & Private Mesh (Admin Only)                │
+│                                                             │
+│  ┌────────────────────────────────────────────────────────┐ │
+│  │  Docker Container: kucet-cms-proxy (Nginx :80)         │ │
+│  │  - Static Asset Delivery (/_next/static/*)             │ │
+│  │  - Reverse Proxy (proxy_pass http://nextjs_upstream)   │ │
+│  │  - WebSocket Reverse Proxy (/socket.io/ -> :4000)      │ │
+│  │  - Internal Media Delivery (/internal_uploads/*)       │ │
+│  └────────────────────────┬───────────────────────────────┘ │
+│                           │                                 │
+│  ┌────────────────────────▼───────────────────────────────┐ │
+│  │  Docker Container: kucet-cms-app (Next.js :3000)       │ │
+│  │  - Node.js 20 ESM Standalone Runtime                   │ │
+│  │  - React 19 / Next.js 16 App Router                    │ │
+│  └────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 2. Ingress Architecture & Public vs. Private Boundaries
+
+### 2.1 Why NAT Traversal Ingress is Required
+The physical server sits inside the Kakatiya University local campus network (`172.100.122.210/16`) behind an institutional Carrier-Grade NAT gateway (`14.139.85.68`). Inbound ports 80/443 on the campus public IP are not forwarded by the university firewall.
+
+To serve public traffic without requiring end-users or students to install any VPN or client software:
+1. **Public Web Ingress (Zero-Client Requirement):** Tailscale Funnel / Cloudflare Tunnel maintains outbound encrypted connections to edge relays, exposing a public HTTPS URL (`https://kucet-dev-hp-pro-tower-280-g9-pci-desktop-pc.tailf6b4a7.ts.net`) that any standard browser on the Internet can reach directly.
+2. **Private Administration Mesh:** Tailscale remains active on the host machine strictly for SSH administration (`ssh kucet-dev-hp-pro-tower-280-g9-pci-desktop-pc`) and internal monitoring, completely isolated from public student traffic.
+
+### 2.2 Tailscale Serve & Funnel Configuration
+Tailscale Funnel terminates HTTPS using automatic Let's Encrypt certificates and forwards cleartext HTTP to local port 80.
+
+To configure and verify Tailscale Serve:
+```bash
+# Verify status
+tailscale serve status
+
+# Configure HTTPS termination to local Nginx port 80 (IPv4 loopback)
+tailscale serve --bg https / http://127.0.0.1:80
+```
+
+> [!IMPORTANT]
+> Always forward to `http://127.0.0.1:80` rather than `http://localhost:80`. Modern Linux distributions resolve `localhost` to IPv6 `::1` first, which can cause connection timeouts if Docker's bridge network binds port 80 to IPv4 `0.0.0.0:80`.
+
+### 2.2 Server Host Power Management & Sleep Masking
+Because desktop hardware (HP Pro Tower) includes automatic energy-saving sleep/suspend policies by default, server nodes must mask systemd sleep targets to prevent the network interface card (NIC) from suspending during periods of user inactivity:
+
+```bash
+# Invariant: Mask sleep and suspend targets on self-hosted servers
+sudo systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
+
+# Verify status
+for target in sleep.target suspend.target hibernate.target hybrid-sleep.target; do
+  systemctl is-enabled "$target"
+done
+```
+
+---
+
+## 3. Nginx Reverse Proxy & Asset Caching
+
+### 3.1 Routing Rules (`DEPLOYMENT_PACKAGE/nginx/nginx.conf`)
+- **Main Application (`location /`):** Proxies dynamically to `nextjs_upstream` with HTTP/1.1 keepalive connections and proper `Host`, `X-Real-IP`, `X-Forwarded-For`, and `X-Forwarded-Proto` header propagation.
+- **Static Assets (`location /_next/static`):** Handled with `Cache-Control: public, max-age=31536000, immutable`. Content-hashed filenames guarantee that asset content never mutates.
+- **Authentication & API Routes (`/api/*`):** Dynamic, authenticated; never cached.
+
+---
+
+## 4. Next.js Deployment Lifecycle & ChunkLoadError Recovery
+
+### 4.1 Deployment Sequence
+When `deploy.sh` executes:
+1. Pulls latest commit from Git repository.
+2. Executes pre-migration database snapshot (`nightly-backup.sh`).
+3. Runs Drizzle database migrations (`npm run db:migrate`).
+4. Rebuilds images while existing containers remain online (`docker compose build app realtime`).
+5. Performs atomic container switch (`docker compose up -d --no-deps app realtime`).
+6. Validates Nginx configuration (`nginx -t`) and reloads proxy.
+7. Runs automated health verification (`health-check.sh`).
+
+### 4.2 Dynamic Chunk Invalidation & Client Auto-Recovery
+When a new container build is deployed, old JavaScript chunk hashes are replaced with new ones. To prevent open browser tabs from crashing with `ChunkLoadError` or requiring manual hard refreshes:
+
+1. **Window-Level Error Interceptor (`src/components/PwaRegister.js`):**
+   - Intercepts `window.onerror` and `window.onunhandledrejection`.
+   - Identifies `ChunkLoadError`, `Loading chunk failed`, and `Failed to fetch dynamically imported module`.
+   - Checks `sessionStorage['kucet_chunk_retry_ts']`.
+   - If no reload occurred in the last 20 seconds, automatically executes `window.location.reload()`, fetching the latest HTML document and bundle manifest.
+   - Throttles subsequent failures within 20 seconds to prevent infinite reload loops.
+
+2. **React Error Boundaries (`src/app/error.js` & `src/app/global-error.jsx`):**
+   - Detects chunk failure state and renders an "Update Available" notification with an explicit "Reload Application" button.
+
+---
+
+## 5. PWA / Service Worker Architecture
+
+### 5.1 Service Worker Invariants (`public/sw.js`)
+- **Cache Versioning (`CACHE_VERSION = 'v6'`):** Bumping cache version triggers automated eviction of all obsolete cache stores on activation.
+- **API Cache Bypass:** All `/api/*` and non-GET requests bypass the service worker completely.
+- **Dynamic Chunk Bypass:** Requests matching `/_next/static/chunks/*` bypass SW caching, allowing native HTTP caching and unhindered client error detection.
+- **Media & Asset Caching:** Static assets (`.png`, `.webp`, `.woff2`, `.css`) utilize Stale-While-Revalidate caching.
+- **Smart Navigation Fallback & True Document Reload:**
+  - When `navigator.onLine === false`: Serves cached `/offline` page.
+  - When network errors occur during deployments or restarts: Serves auto-reconnecting fallback that polls `/api/health`. Upon health restoration, executes `doRestore()` (`window.location.reload()`), preventing same-URL navigation no-op freezes.
+
+---
+
+## 6. Tailscale Funnel Operational Limits & Institutional Migration Criteria
+
+### 6.1 Funnel Capabilities & Safeguards
+Tailscale Funnel provides public HTTPS ingress (`https://kucet-dev-hp-pro-tower-280-g9-pci-desktop-pc.tailf6b4a7.ts.net`) with built-in TLS termination and DDoS mitigation via Tailscale DERP relays.
+- **Active Ingress Probing:** `monitor.sh` checks the public HTTPS `/api/health` endpoint every 5 minutes. If a transient DERP disconnect or mapping lapse occurs, `monitor.sh` re-applies `tailscale funnel --bg http://127.0.0.1:80` and alerts via webhook if unreachable after retry.
+
+### 6.2 Institutional Migration Criteria
+When campus requirements exceed Funnel boundaries, migrate to direct institutional ingress:
+1. **Traffic Threshold:** Sustained concurrency exceeding 200 requests/sec.
+2. **Bandwidth:** High-volume video streaming or multi-gigabyte continuous data transfers.
+3. **Institutional FQDN:** Formal university custom domain requirement (`https://cms.kucet.ac.in`).
+
+---
+
+## 7. Troubleshooting & Operational Runbook
+
+| Scenario | Diagnostic Command | Remediation Action |
+| :--- | :--- | :--- |
+| **Tailscale URL Unreachable** | `tailscale status`<br>`tailscale serve status` | Run `tailscale serve --bg https / http://127.0.0.1:80`. Verify sleep targets are masked. |
+| **Old UI / Stale Cache After Deploy** | Open browser console; check `sw.js` registration | Post message to SW or bump `CACHE_VERSION` in `public/sw.js`. Hard refresh (`Ctrl+Shift+R`). |
+| **ChunkLoadError on Navigation** | Inspect Network tab for 404 on `/_next/static/chunks/` | Auto-recovery triggers transparent reload. Clear session storage flag if needed. |
+| **False "You are Offline" page** | Click "Test Connection" on `/offline` | Automated health ping tests `/api/health` and automatically reloads once server responds. |
+
